@@ -11,31 +11,53 @@ import com.netconect.app.R
 import com.netconect.app.util.SessionManager
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var session: SessionManager
+    private lateinit var etBaseUrl: EditText
+    private lateinit var tvCredits: TextView
+    private lateinit var btnSaveServer: Button
+    private lateinit var btnLogout: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val session = SessionManager(this)
-        val etServer = findViewById<EditText>(R.id.etServerUrl)
-        val tvUser = findViewById<TextView>(R.id.tvCurrentUser)
-        etServer.setText(session.getBaseUrl())
-        tvUser.text = "Usuário: ${session.getUsername() ?: "não autenticado"}"
+        session = SessionManager(this)
 
-        findViewById<Button>(R.id.btnSaveServer).setOnClickListener {
-            val url = etServer.text.toString().trim()
-            if (url.isBlank()) {
+        etBaseUrl = findViewById(R.id.etBaseUrl)
+        tvCredits = findViewById(R.id.tvCredits)
+        btnSaveServer = findViewById(R.id.btnSaveServer)
+        btnLogout = findViewById(R.id.btnLogout)
+
+        etBaseUrl.setText(session.getBaseUrl())
+
+        tvCredits.text = """
+            Desenvolvido por Jefferson Carvalho
+
+            Provérbios 15:33
+            "O temor do Senhor ensina a sabedoria,
+            e a humildade antecede a honra."
+        """.trimIndent()
+
+        btnSaveServer.setOnClickListener {
+            val baseUrl = etBaseUrl.text.toString().trim()
+
+            if (baseUrl.isBlank()) {
                 Toast.makeText(this, "Informe a URL do servidor", Toast.LENGTH_SHORT).show()
-            } else {
-                session.saveBaseUrl(url)
-                Toast.makeText(this, "Servidor salvo", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            session.saveBaseUrl(baseUrl)
+            Toast.makeText(this, "Servidor salvo com sucesso", Toast.LENGTH_SHORT).show()
         }
 
-        findViewById<Button>(R.id.btnLogout).setOnClickListener {
-            session.clear()
+        btnLogout.setOnClickListener {
+            session.clearSession()
+
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            finish()
         }
     }
 }

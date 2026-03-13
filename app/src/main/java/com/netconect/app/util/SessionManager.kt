@@ -1,43 +1,39 @@
 package com.netconect.app.util
 
 import android.content.Context
+import android.content.SharedPreferences
 
 class SessionManager(context: Context) {
-    private val prefs = context.getSharedPreferences("netconect_prefs", Context.MODE_PRIVATE)
 
-    fun saveToken(token: String) {
-        prefs.edit().putString(KEY_TOKEN, token).apply()
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("netconect_session", Context.MODE_PRIVATE)
+
+    fun saveLogin(token: String, username: String) {
+        prefs.edit()
+            .putString("token", token)
+            .putString("username", username)
+            .apply()
     }
 
-    fun getToken(): String? = prefs.getString(KEY_TOKEN, null)
-
-    fun saveUsername(username: String) {
-        prefs.edit().putString(KEY_USERNAME, username).apply()
+    fun getToken(): String? {
+        return prefs.getString("token", "")
     }
 
-    fun getUsername(): String? = prefs.getString(KEY_USERNAME, null)
-
-    fun saveUserPhotoPath(path: String?) {
-        prefs.edit().putString(KEY_USER_PHOTO_PATH, path).apply()
+    fun getUsername(): String? {
+        return prefs.getString("username", "")
     }
 
-    fun getUserPhotoPath(): String? = prefs.getString(KEY_USER_PHOTO_PATH, null)
-
-    fun saveBaseUrl(url: String) {
-        prefs.edit().putString(KEY_BASE_URL, url.trimEnd('/')).apply()
+    fun saveBaseUrl(baseUrl: String) {
+        prefs.edit()
+            .putString("base_url", baseUrl)
+            .apply()
     }
 
-    fun getBaseUrl(): String = prefs.getString(KEY_BASE_URL, DEFAULT_BASE_URL)!!.trimEnd('/')
+    fun getBaseUrl(): String {
+        return prefs.getString("base_url", "http://200.106.207.13:27004") ?: "http://200.106.207.13:27004"
+    }
 
-    fun clear() {
+    fun clearSession() {
         prefs.edit().clear().apply()
-    }
-
-    companion object {
-        const val DEFAULT_BASE_URL = "http://200.106.207.13:27004"
-        private const val KEY_TOKEN = "token"
-        private const val KEY_USERNAME = "username"
-        private const val KEY_USER_PHOTO_PATH = "user_photo_path"
-        private const val KEY_BASE_URL = "base_url"
     }
 }

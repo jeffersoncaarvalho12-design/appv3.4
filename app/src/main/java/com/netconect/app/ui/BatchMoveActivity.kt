@@ -1,7 +1,6 @@
 package com.netconect.app.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -52,6 +51,7 @@ class BatchMoveActivity : AppCompatActivity() {
                 Toast.makeText(this, "Carregue os técnicos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             createBatch(
                 techIds[spinnerTechnician.selectedItemPosition],
                 etOsNumber.text.toString().trim(),
@@ -75,11 +75,13 @@ class BatchMoveActivity : AppCompatActivity() {
                 Toast.makeText(this, "Crie o lote primeiro", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val term = etBatchSearch.text.toString().trim()
             if (term.isBlank()) {
                 Toast.makeText(this, "Informe serial, MAC ou modelo", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             searchAndAdd(term, tvBatchSelected, listBatchItems, progress)
         }
 
@@ -88,16 +90,24 @@ class BatchMoveActivity : AppCompatActivity() {
                 Toast.makeText(this, "Crie o lote primeiro", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             if (spinnerProduct.selectedItemPosition < 0 || productIds.isEmpty()) {
                 Toast.makeText(this, "Carregue os produtos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val qty = etBatchQty.text.toString().trim().toIntOrNull() ?: 0
             if (qty <= 0) {
                 Toast.makeText(this, "Informe a quantidade", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            addBatchByModel(productIds[spinnerProduct.selectedItemPosition], qty, listBatchItems, progress)
+
+            addBatchByModel(
+                productIds[spinnerProduct.selectedItemPosition],
+                qty,
+                listBatchItems,
+                progress
+            )
         }
 
         findViewById<Button>(R.id.btnCloseBatch).setOnClickListener {
@@ -105,20 +115,24 @@ class BatchMoveActivity : AppCompatActivity() {
                 Toast.makeText(this, "Crie o lote primeiro", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             closeBatch(progress)
         }
     }
 
     private fun loadTechnicians(spinner: Spinner, progress: ProgressBar) {
         progress.visibility = View.VISIBLE
+
         thread {
             val result = ApiClient.get(
                 session.getBaseUrl() + "/api/technicians.php",
                 session.getToken()
             )
+
             runOnUiThread {
                 progress.visibility = View.GONE
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     val arr = body.optJSONArray("data") ?: JSONArray()
                     val names = mutableListOf<String>()
@@ -152,8 +166,10 @@ class BatchMoveActivity : AppCompatActivity() {
                 session.getBaseUrl() + "/api/catalog_products.php",
                 session.getToken()
             )
+
             runOnUiThread {
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     val arr = body.optJSONArray("data") ?: JSONArray()
                     val labels = mutableListOf<String>()
@@ -184,6 +200,7 @@ class BatchMoveActivity : AppCompatActivity() {
         progress: ProgressBar
     ) {
         progress.visibility = View.VISIBLE
+
         thread {
             val payload = JSONObject().apply {
                 put("technician_id", technicianId)
@@ -200,6 +217,7 @@ class BatchMoveActivity : AppCompatActivity() {
             runOnUiThread {
                 progress.visibility = View.GONE
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     val data = body.optJSONObject("data")
                     currentBatchId = data?.optInt("batch_id", 0) ?: 0
@@ -239,6 +257,7 @@ class BatchMoveActivity : AppCompatActivity() {
         progress: ProgressBar
     ) {
         progress.visibility = View.VISIBLE
+
         thread {
             val search = ApiClient.get(
                 session.getBaseUrl() + "/api/search.php?q=" + URLEncoder.encode(term, "UTF-8"),
@@ -247,6 +266,7 @@ class BatchMoveActivity : AppCompatActivity() {
 
             runOnUiThread {
                 val body = search.body
+
                 if (search.success && body?.optString("status") == "success") {
                     val data = body.opt("data")
                     val item = when (data) {
@@ -257,10 +277,15 @@ class BatchMoveActivity : AppCompatActivity() {
 
                     val itemId = item?.optInt("id", 0) ?: 0
 
+                    val productName = item?.optString("product_name", "-") ?: "-"
+                    val serial = item?.optString("serial_number", "-") ?: "-"
+                    val macRaw = item?.optString("mac_address", "") ?: ""
+                    val mac = if (macRaw.isBlank() || macRaw == "null") "—" else macRaw
+
                     tvSelected.text = """
-                        Item selecionado: ${item?.optString("product_name", "-") ?: "-"}
-                        Serial: ${item?.optString("serial_number", "-") ?: "-"}
-                        MAC: ${item?.optString("mac_address", "-") ?: "-"}
+                        Item selecionado: $productName
+                        Serial: $serial
+                        MAC: $mac
                     """.trimIndent()
 
                     addBatchItem(itemId, list, progress)
@@ -293,6 +318,7 @@ class BatchMoveActivity : AppCompatActivity() {
 
             runOnUiThread {
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     Toast.makeText(
                         this,
@@ -314,6 +340,7 @@ class BatchMoveActivity : AppCompatActivity() {
 
     private fun addBatchByModel(productId: Int, qty: Int, list: ListView, progress: ProgressBar) {
         progress.visibility = View.VISIBLE
+
         thread {
             val payload = JSONObject().apply {
                 put("batch_id", currentBatchId)
@@ -330,6 +357,7 @@ class BatchMoveActivity : AppCompatActivity() {
 
             runOnUiThread {
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     Toast.makeText(
                         this,
@@ -359,6 +387,7 @@ class BatchMoveActivity : AppCompatActivity() {
             runOnUiThread {
                 progress.visibility = View.GONE
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     val data = body.optJSONObject("data")
                     val items = data?.optJSONArray("items") ?: JSONArray()
@@ -369,10 +398,21 @@ class BatchMoveActivity : AppCompatActivity() {
 
                     for (i in 0 until items.length()) {
                         val item = items.getJSONObject(i)
+
+                        val brandRaw = item.optString("brand", "")
+                        val modelRaw = item.optString("model", "")
+                        val brand = if (brandRaw.isBlank() || brandRaw == "null") "" else brandRaw
+                        val model = if (modelRaw.isBlank() || modelRaw == "null") "Produto" else modelRaw
+                        val serial = item.optString("serial_number", "-")
+                        val macRaw = item.optString("mac_address", "")
+                        val mac = if (macRaw.isBlank() || macRaw == "null") "—" else macRaw
+
+                        val title = (brand + " " + model).trim().ifBlank { "Produto" }
+
                         val line = """
-                            ${item.optString("brand", "")} ${item.optString("model", "")}
-                            Serial: ${item.optString("serial_number", "-")}
-                            MAC: ${item.optString("mac_address", "-")}
+                            $title
+                            Serial: $serial
+                            MAC: $mac
                         """.trimIndent()
 
                         lines.add(line)
@@ -396,6 +436,7 @@ class BatchMoveActivity : AppCompatActivity() {
 
     private fun closeBatch(progress: ProgressBar) {
         progress.visibility = View.VISIBLE
+
         thread {
             val payload = JSONObject().apply {
                 put("batch_id", currentBatchId)
@@ -410,12 +451,12 @@ class BatchMoveActivity : AppCompatActivity() {
             runOnUiThread {
                 progress.visibility = View.GONE
                 val body = result.body
+
                 if (result.success && body?.optString("status") == "success") {
                     val receiptUrl = session.getBaseUrl() +
-                        "/api/receipt_batch.php?batch_id=$currentBatchId&token=" +
-                        Uri.encode(session.getToken())
+                        "/receipt_batch_thermal.php?id=$currentBatchId"
 
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(receiptUrl)))
+                    startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(receiptUrl)))
                 } else {
                     Toast.makeText(
                         this,
@@ -430,6 +471,7 @@ class BatchMoveActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+
         if (result != null && result.contents != null) {
             val etBatchSearch = findViewById<EditText>(R.id.etBatchSearch)
             etBatchSearch.setText(result.contents)

@@ -29,9 +29,10 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:hint="Buscar por marca, modelo, ref..."
+            android:hint="Buscar por referência, marca, modelo ou código"
             android:paddingHorizontal="8dp"
-            android:textColor="@color/text_dark" />
+            android:textColor="@color/text_dark"
+            android:textColorHint="#607D8B" />
 
         <Button
             android:id="@+id/btnSearchStock"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- PERMISSÕES -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -13,16 +14,7 @@
         android:theme="@style/Theme.NetConect"
         android:usesCleartextTraffic="true">
 
-        <activity android:name="com.netconect.app.ui.StockProductsActivity" />
-        <activity android:name="com.netconect.app.ui.EntryActivity" />
-        <activity android:name="com.netconect.app.ui.BatchMoveActivity" />
-        <activity android:name="com.netconect.app.ui.SettingsActivity" />
-        <activity android:name="com.netconect.app.ui.HistoryActivity" />
-        <activity android:name="com.netconect.app.ui.MoveActivity" />
-        <activity android:name="com.netconect.app.ui.SecondReceiptActivity" />
-        <activity android:name="com.netconect.app.ui.FinalizedBatchesActivity" />
-        <activity android:name="com.netconect.app.ui.MainActivity" />
-
+        <!-- LOGIN -->
         <activity
             android:name="com.netconect.app.ui.LoginActivity"
             android:exported="true">
@@ -31,6 +23,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- DASHBOARD -->
+        <activity android:name="com.netconect.app.ui.MainActivity" />
+
+        <!-- ESTOQUE -->
+        <activity android:name="com.netconect.app.ui.StockProductsActivity" />
+        <activity android:name="com.netconect.app.ui.DefectiveStockActivity" />
+
+        <!-- MOVIMENTAÇÃO -->
+        <activity android:name="com.netconect.app.ui.EntryActivity" />
+        <activity android:name="com.netconect.app.ui.MoveActivity" />
+        <activity android:name="com.netconect.app.ui.BatchMoveActivity" />
+
+        <!-- HISTÓRICO -->
+        <activity android:name="com.netconect.app.ui.HistoryActivity" />
+
+        <!-- RECIBOS -->
+        <activity android:name="com.netconect.app.ui.SecondReceiptActivity" />
+        <activity android:name="com.netconect.app.ui.FinalizedBatchesActivity" />
+
+        <!-- CONFIGURAÇÕES -->
+        <activity android:name="com.netconect.app.ui.SettingsActivity" />
 
     </application>
 

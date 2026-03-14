@@ -17,7 +17,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#2E7D32"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="12dp" />
 
         <EditText
             android:id="@+id/etBarcode"
@@ -25,7 +25,7 @@
             android:layout_height="48dp"
             android:hint="Serial / MAC / modelo"
             android:background="@android:drawable/edit_text"
-            android:padding="10dp"/>
+            android:padding="10dp" />
 
         <Button
             android:id="@+id/btnSearchItem"
@@ -34,7 +34,7 @@
             android:text="Buscar"
             android:layout_marginTop="6dp"
             android:backgroundTint="#1976D2"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnScanMove"
@@ -43,7 +43,7 @@
             android:text="Escanear pela câmera"
             android:layout_marginTop="6dp"
             android:backgroundTint="#0288D1"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/tvItemName"
@@ -52,50 +52,45 @@
             android:text="Item"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/tvItemStock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Status atual"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp" />
 
         <Spinner
             android:id="@+id/spinnerMovement"
             android:layout_width="match_parent"
-            android:layout_height="48dp"/>
+            android:layout_height="48dp" />
+
+        <Spinner
+            android:id="@+id/spinnerTechnicianMove"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerReasonMove"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp" />
 
         <EditText
             android:id="@+id/etLocation"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:hint="Localização"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp" />
 
         <EditText
             android:id="@+id/etNote"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:hint="Observação"
-            android:layout_marginTop="8dp"/>
-
-        <Button
-            android:id="@+id/btnTakePhoto"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Tirar foto"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="#FB8C00"
-            android:textColor="#FFFFFF"/>
-
-        <ImageView
-            android:id="@+id/imgMovePreview"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="10dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"/>
+            android:layout_marginTop="8dp" />
 
         <Button
             android:id="@+id/btnSendMove"
@@ -104,7 +99,7 @@
             android:text="Confirmar movimentação"
             android:textColor="#FFFFFF"
             android:backgroundTint="#2E7D32"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="12dp" />
 
         <ProgressBar
             android:id="@+id/progressMove"
@@ -112,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 

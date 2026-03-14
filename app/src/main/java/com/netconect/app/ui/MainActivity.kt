@@ -52,15 +52,11 @@ class MainActivity : AppCompatActivity() {
         tvUserInitials.text = username.take(2).uppercase()
 
         findViewById<Button>(R.id.btnQuickSearch).setOnClickListener {
-            val query = etQuickSearch.text.toString().trim()
+            openQuickSearch()
+        }
 
-            if (query.isBlank()) {
-                Toast.makeText(this, "Digite serial, MAC ou modelo", Toast.LENGTH_SHORT).show()
-            } else {
-                val intent = Intent(this, MoveActivity::class.java)
-                intent.putExtra("barcode", query)
-                startActivity(intent)
-            }
+        findViewById<Button>(R.id.btnQuickScan).setOnClickListener {
+            startScanner()
         }
 
         findViewById<Button>(R.id.btnGoScanner).setOnClickListener {
@@ -139,6 +135,19 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadDashboard()
         loadLatestBatches()
+    }
+
+    private fun openQuickSearch() {
+        val query = etQuickSearch.text.toString().trim()
+
+        if (query.isBlank()) {
+            Toast.makeText(this, "Digite modelo, nome, serial ou MAC", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(this, MoveActivity::class.java)
+        intent.putExtra("barcode", query)
+        startActivity(intent)
     }
 
     private fun loadDashboard() {
@@ -263,9 +272,9 @@ class MainActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
 
         if (result != null && result.contents != null) {
-            val intent = Intent(this, MoveActivity::class.java)
-            intent.putExtra("barcode", result.contents)
-            startActivity(intent)
+            etQuickSearch.setText(result.contents)
+            etQuickSearch.requestFocus()
+            Toast.makeText(this, "Código lido e preenchido na busca rápida", Toast.LENGTH_SHORT).show()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }

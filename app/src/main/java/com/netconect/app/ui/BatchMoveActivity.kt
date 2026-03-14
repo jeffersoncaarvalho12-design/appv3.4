@@ -1,6 +1,7 @@
 package com.netconect.app.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -454,9 +455,10 @@ class BatchMoveActivity : AppCompatActivity() {
 
                 if (result.success && body?.optString("status") == "success") {
                     val receiptUrl = session.getBaseUrl() +
-                        "/receipt_batch_thermal.php?id=$currentBatchId"
+                        "/receipt_batch_thermal.php?id=$currentBatchId&token=" +
+                        Uri.encode(session.getToken())
 
-                    startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(receiptUrl)))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(receiptUrl)))
                 } else {
                     Toast.makeText(
                         this,

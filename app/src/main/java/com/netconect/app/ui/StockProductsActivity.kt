@@ -71,9 +71,11 @@ class StockProductsActivity : AppCompatActivity() {
                 if (result.success && body?.optString("status") == "success") {
                     val arr = body.optJSONArray("data") ?: JSONArray()
                     items.clear()
+
                     for (i in 0 until arr.length()) {
                         items.add(arr.getJSONObject(i))
                     }
+
                     adapter.notifyDataSetChanged()
                 } else {
                     Toast.makeText(
@@ -84,6 +86,11 @@ class StockProductsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun cleanText(value: String?, fallback: String = "—"): String {
+        val text = value?.trim().orEmpty()
+        return if (text.isBlank() || text.equals("null", ignoreCase = true)) fallback else text
     }
 
     inner class ProductStockAdapter : BaseAdapter() {
@@ -102,18 +109,25 @@ class StockProductsActivity : AppCompatActivity() {
             val tvRef = view.findViewById<TextView>(R.id.tvCardRef)
 
             val item = items[position]
-            tvName.text = item.optString("product_name", "Produto")
-            tvQty.text = "Disponível: ${item.optInt("available_qty", 0)}"
-            tvCategory.text = item.optString("category_name", "Sem categoria")
-            tvRef.text = item.optString("ref_code", "")
+
+            val label = cleanText(item.optString("label", ""), "Produto")
+            val qtyInStock = item.optInt("qty_in_stock", 0)
+            val category = cleanText(item.optString("category", ""), "Sem categoria")
+            val refCode = cleanText(item.optString("ref_code", ""), "")
+            val imagePath = cleanText(item.optString("image_path", ""), "")
+
+            tvName.text = label
+            tvQty.text = "Disponível: $qtyInStock"
+            tvCategory.text = category
+            tvRef.text = if (refCode.isBlank()) "" else "Ref: $refCode"
 
             img.setImageResource(android.R.drawable.sym_def_app_icon)
-            val photoPath = item.optString("photo_path", "")
-            if (photoPath.isNotBlank()) {
-                val fullUrl = if (photoPath.startsWith("http://") || photoPath.startsWith("https://")) {
-                    photoPath
+
+            if (imagePath.isNotBlank()) {
+                val fullUrl = if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+                    imagePath
                 } else {
-                    session.getBaseUrl() + if (photoPath.startsWith('/')) photoPath else "/$photoPath"
+                    session.getBaseUrl() + if (imagePath.startsWith('/')) imagePath else "/$imagePath"
                 }
 
                 thread {
@@ -123,9 +137,12 @@ class StockProductsActivity : AppCompatActivity() {
                         conn.readTimeout = 10000
                         conn.doInput = true
                         conn.connect()
+
                         val bmp = BitmapFactory.decodeStream(conn.inputStream)
                         if (bmp != null) {
-                            runOnUiThread { img.setImageBitmap(bmp) }
+                            runOnUiThread {
+                                img.setImageBitmap(bmp)
+                            }
                         }
                     } catch (_: Exception) {
                     }

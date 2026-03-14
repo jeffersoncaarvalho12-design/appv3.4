@@ -19,22 +19,17 @@
         <activity android:name="com.netconect.app.ui.SettingsActivity" />
         <activity android:name="com.netconect.app.ui.HistoryActivity" />
         <activity android:name="com.netconect.app.ui.MoveActivity" />
-
-        <!-- novas telas -->
         <activity android:name="com.netconect.app.ui.SecondReceiptActivity" />
         <activity android:name="com.netconect.app.ui.FinalizedBatchesActivity" />
-
         <activity android:name="com.netconect.app.ui.MainActivity" />
 
         <activity
             android:name="com.netconect.app.ui.LoginActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
     </application>

@@ -240,13 +240,13 @@
                         android:textColor="@android:color/white" />
 
                     <Button
-                        android:id="@+id/btnGoHistory"
+                        android:id="@+id/btnGoDefects"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/btn_history"
-                        android:text="Histórico"
+                        android:backgroundTint="#C62828"
+                        android:text="Estoque defeituoso"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
 
@@ -257,34 +257,52 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btnGoSecondReceipt"
+                        android:id="@+id/btnGoHistory"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
+                        android:backgroundTint="@color/btn_history"
+                        android:text="Histórico"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/btnGoSecondReceipt"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
                         android:backgroundTint="#374151"
                         android:text="2ª via recibo"
                         android:textColor="@android:color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/btnGoFinalizedBatches"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         android:backgroundTint="#0F766E"
                         android:text="Lotes finalizados"
                         android:textColor="@android:color/white" />
-                </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnGoSettings"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="10dp"
-                    android:backgroundTint="@color/btn_settings"
-                    android:text="Configurações"
-                    android:textColor="@android:color/white" />
+                    <Button
+                        android:id="@+id/btnGoSettings"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/btn_settings"
+                        android:text="Configurações"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"

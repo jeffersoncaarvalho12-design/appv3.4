@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadLatestBatches() {
         thread {
             val result = ApiClient.get(
-                session.getBaseUrl() + "/api/latest_batches.php?limit=5",
+                session.getBaseUrl() + "/api/batches_last.php",
                 session.getToken()
             )
 
@@ -196,10 +196,10 @@ class MainActivity : AppCompatActivity() {
                         val item = arr.getJSONObject(i)
 
                         val batchId = item.optInt("id")
-                        val tech = item.optString("technician_name", "-")
-                        val os = item.optString("os_number", "-")
-                        val date = item.optString("created_at_br", "-")
-                        val total = item.optInt("total_items", 0)
+                        val tech = item.optString("technician", "-")
+                        val osRaw = item.optString("os_number", "")
+                        val os = if (osRaw.isBlank() || osRaw == "null") "-" else osRaw
+                        val date = item.optString("created_at", "-")
 
                         latestBatchIds.add(batchId)
 
@@ -208,7 +208,6 @@ class MainActivity : AppCompatActivity() {
                             Técnico: $tech
                             OS: $os
                             Data: $date
-                            Itens: $total
                         """.trimIndent()
 
                         lines.add(line)

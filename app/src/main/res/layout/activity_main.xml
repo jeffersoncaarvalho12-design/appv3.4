@@ -95,7 +95,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
-                        android:hint="Buscar Serial / MAC / Modelo"
+                        android:hint="Buscar modelo, nome, serial ou MAC"
                         android:paddingHorizontal="10dp"
                         android:textColor="@color/text_dark"
                         android:textColorHint="#607D8B" />
@@ -104,8 +104,18 @@
                         android:id="@+id/btnQuickSearch"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
+                        android:layout_marginStart="6dp"
                         android:backgroundTint="@color/green_dark"
                         android:text="Buscar"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/btnQuickScan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="6dp"
+                        android:backgroundTint="@color/btn_scanner"
+                        android:text="Scan"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
 

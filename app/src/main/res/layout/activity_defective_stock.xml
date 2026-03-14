@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/green_light"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<TextView
+    android:text="Estoque com defeito"
+    android:textSize="22sp"
+    android:textStyle="bold"
+    android:textColor="@color/green_dark"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+<ProgressBar
+    android:id="@+id/progressDefects"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_gravity="center"/>
+
+<ListView
+    android:id="@+id/listDefects"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"/>
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/bg_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<TextView
+    android:id="@+id/tvDefectName"
+    android:textStyle="bold"
+    android:textSize="16sp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+<TextView
+    android:id="@+id/tvDefectSerial"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+<Button
+    android:id="@+id/btnReturnStock"
+    android:text="Devolver ao estoque"
+    android:layout_marginTop="6dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+</LinearLayout>

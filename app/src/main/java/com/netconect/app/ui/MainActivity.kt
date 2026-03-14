@@ -83,6 +83,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, StockProductsActivity::class.java))
         }
 
+        findViewById<Button>(R.id.btnGoDefects).setOnClickListener {
+            startActivity(Intent(this, DefectiveStockActivity::class.java))
+        }
+
         findViewById<Button>(R.id.btnGoHistory).setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }

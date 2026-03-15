@@ -39,12 +39,10 @@ class StockProductsActivity : AppCompatActivity() {
     private lateinit var progress: ProgressBar
     private lateinit var listStock: ListView
     private lateinit var etSearchStock: EditText
-    private lateinit var btnAddPhotoProduct: Button
     private lateinit var adapter: ProductStockAdapter
 
     private val items = mutableListOf<JSONObject>()
     private var selectedProductId: Int = 0
-    private var selectedPosition: Int = -1
 
     companion object {
         private const val REQUEST_TAKE_PHOTO = 3001
@@ -59,39 +57,12 @@ class StockProductsActivity : AppCompatActivity() {
         progress = findViewById(R.id.progressStock)
         listStock = findViewById(R.id.listStock)
         etSearchStock = findViewById(R.id.etSearchStock)
-        btnAddPhotoProduct = findViewById(R.id.btnAddPhotoProduct)
 
         adapter = ProductStockAdapter()
         listStock.adapter = adapter
 
         findViewById<Button>(R.id.btnSearchStock).setOnClickListener {
             loadStock(etSearchStock.text.toString().trim())
-        }
-
-        listStock.setOnItemClickListener { _, _, position, _ ->
-            val item = items[position]
-            selectedProductId = item.optInt("id", 0)
-            selectedPosition = position
-            adapter.notifyDataSetChanged()
-
-            val label = cleanText(item.optString("label", ""), "Produto")
-            Toast.makeText(
-                this,
-                "Selecionado: $label",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        btnAddPhotoProduct.setOnClickListener {
-            if (selectedProductId <= 0) {
-                Toast.makeText(
-                    this,
-                    "Toque primeiro em um produto da lista",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-            openCamera()
         }
 
         loadStock("")
@@ -121,8 +92,6 @@ class StockProductsActivity : AppCompatActivity() {
                         items.add(arr.getJSONObject(i))
                     }
 
-                    selectedProductId = 0
-                    selectedPosition = -1
                     adapter.notifyDataSetChanged()
                 } else {
                     Toast.makeText(
@@ -149,7 +118,9 @@ class StockProductsActivity : AppCompatActivity() {
         }
     }
 
-    private fun openCamera() {
+    private fun openCameraForProduct(productId: Int) {
+        selectedProductId = productId
+
         val permissionGranted = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.CAMERA
@@ -245,9 +216,11 @@ class StockProductsActivity : AppCompatActivity() {
             val tvQty = view.findViewById<TextView>(R.id.tvCardQty)
             val tvCategory = view.findViewById<TextView>(R.id.tvCardCategory)
             val tvRef = view.findViewById<TextView>(R.id.tvCardRef)
+            val btnCardPhoto = view.findViewById<Button>(R.id.btnCardPhoto)
 
             val item = items[position]
 
+            val productId = item.optInt("id", 0)
             val label = cleanText(item.optString("label", ""), "Produto")
             val qtyInStock = item.optInt("qty_in_stock", 0)
             var category = cleanText(item.optString("category", ""), "Sem categoria")
@@ -265,12 +238,6 @@ class StockProductsActivity : AppCompatActivity() {
                 tvQty.setTextColor(resources.getColor(android.R.color.holo_red_dark))
             } else {
                 tvQty.setTextColor(resources.getColor(android.R.color.black))
-            }
-
-            if (position == selectedPosition) {
-                view.alpha = 0.82f
-            } else {
-                view.alpha = 1.0f
             }
 
             img.setImageResource(android.R.drawable.sym_def_app_icon)
@@ -301,6 +268,10 @@ class StockProductsActivity : AppCompatActivity() {
                 }
             }
 
+            btnCardPhoto.setOnClickListener {
+                openCameraForProduct(productId)
+            }
+
             return view
         }
     }
@@ -314,7 +285,9 @@ class StockProductsActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera()
+                if (selectedProductId > 0) {
+                    openCameraForProduct(selectedProductId)
+                }
             } else {
                 Toast.makeText(
                     this,

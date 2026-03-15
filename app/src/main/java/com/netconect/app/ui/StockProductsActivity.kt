@@ -65,7 +65,16 @@ class StockProductsActivity : AppCompatActivity() {
             loadStock(etSearchStock.text.toString().trim())
         }
 
+        findViewById<Button>(R.id.btnAddNewModel).setOnClickListener {
+            startActivity(Intent(this, AddProductActivity::class.java))
+        }
+
         loadStock("")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadStock(etSearchStock.text.toString().trim())
     }
 
     private fun loadStock(query: String) {

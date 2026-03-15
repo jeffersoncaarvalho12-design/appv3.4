@@ -2,8 +2,8 @@ package com.netconect.app.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
@@ -44,7 +44,7 @@ class StockProductsActivity : AppCompatActivity() {
     private var selectedPosition: Int = -1
 
     companion object {
-        private const val REQUEST_PICK_IMAGE = 3001
+        private const val REQUEST_TAKE_PHOTO = 3001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +87,7 @@ class StockProductsActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-            pickImage()
+            openCamera()
         }
 
         loadStock("")
@@ -145,47 +145,23 @@ class StockProductsActivity : AppCompatActivity() {
         }
     }
 
-    private fun pickImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_PICK_IMAGE)
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, REQUEST_TAKE_PHOTO)
+        } else {
+            Toast.makeText(this, "Câmera não disponível no aparelho", Toast.LENGTH_LONG).show()
+        }
     }
 
-    private fun uploadProductPhoto(imageUri: Uri) {
+    private fun uploadProductPhotoBase64(base64DataUrl: String) {
         progress.visibility = View.VISIBLE
 
         thread {
             try {
-                val inputStream = contentResolver.openInputStream(imageUri)
-                val bytes = inputStream?.readBytes()
-                inputStream?.close()
-
-                if (bytes == null || bytes.isEmpty()) {
-                    runOnUiThread {
-                        progress.visibility = View.GONE
-                        Toast.makeText(this, "Não foi possível ler a imagem", Toast.LENGTH_LONG).show()
-                    }
-                    return@thread
-                }
-
-                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                if (bitmap == null) {
-                    runOnUiThread {
-                        progress.visibility = View.GONE
-                        Toast.makeText(this, "Imagem inválida", Toast.LENGTH_LONG).show()
-                    }
-                    return@thread
-                }
-
-                val baos = ByteArrayOutputStream()
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, baos)
-                val compressed = baos.toByteArray()
-
-                val base64 = Base64.encodeToString(compressed, Base64.NO_WRAP)
-                val dataUrl = "data:image/jpeg;base64,$base64"
-
                 val payload = JSONObject().apply {
                     put("product_id", selectedProductId)
-                    put("photo_base64", dataUrl)
+                    put("photo_base64", base64DataUrl)
                 }
 
                 val result = ApiClient.post(
@@ -213,7 +189,6 @@ class StockProductsActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-
             } catch (e: Exception) {
                 runOnUiThread {
                     progress.visibility = View.GONE
@@ -225,6 +200,14 @@ class StockProductsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun bitmapToDataUrl(bitmap: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
+        val bytes = baos.toByteArray()
+        val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+        return "data:image/jpeg;base64,$base64"
     }
 
     inner class ProductStockAdapter : BaseAdapter() {
@@ -305,12 +288,14 @@ class StockProductsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            val imageUri = data?.data
-            if (imageUri != null) {
-                uploadProductPhoto(imageUri)
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            val bitmap = data?.extras?.get("data") as? Bitmap
+
+            if (bitmap != null) {
+                val dataUrl = bitmapToDataUrl(bitmap)
+                uploadProductPhotoBase64(dataUrl)
             } else {
-                Toast.makeText(this, "Nenhuma imagem selecionada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Erro ao capturar foto", Toast.LENGTH_SHORT).show()
             }
         }
     }

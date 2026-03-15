@@ -31,8 +31,7 @@
             android:background="@android:color/transparent"
             android:hint="Buscar por referência, marca, modelo ou código"
             android:paddingHorizontal="8dp"
-            android:textColor="@color/text_dark"
-            android:textColorHint="#607D8B" />
+            android:textColor="@color/text_dark" />
 
         <Button
             android:id="@+id/btnSearchStock"
@@ -42,16 +41,6 @@
             android:textColor="@android:color/white"
             android:backgroundTint="@color/green_dark" />
     </LinearLayout>
-
-    <!-- BOTÃO PARA ADICIONAR FOTO -->
-    <Button
-        android:id="@+id/btnAddPhotoProduct"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="10dp"
-        android:text="Adicionar foto ao produto selecionado"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#1565C0" />
 
     <ProgressBar
         android:id="@+id/progressStock"

@@ -24,6 +24,7 @@
 
         <activity android:name="com.netconect.app.ui.MainActivity" />
         <activity android:name="com.netconect.app.ui.StockProductsActivity" />
+        <activity android:name="com.netconect.app.ui.AddProductActivity" />
         <activity android:name="com.netconect.app.ui.DefectiveStockActivity" />
         <activity android:name="com.netconect.app.ui.EntryActivity" />
         <activity android:name="com.netconect.app.ui.MoveActivity" />

@@ -20,6 +20,7 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.netconect.app.R
@@ -178,7 +179,7 @@ class StockProductsActivity : AppCompatActivity() {
                     if (result.success && body?.optString("status") == "success") {
                         Toast.makeText(
                             this,
-                            body.optString("message", "Foto enviada com sucesso"),
+                            body.optString("message", "Foto salva com sucesso"),
                             Toast.LENGTH_LONG
                         ).show()
                         loadStock(etSearchStock.text.toString().trim())
@@ -201,6 +202,64 @@ class StockProductsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun deleteProductPhoto(productId: Int) {
+        progress.visibility = View.VISIBLE
+
+        thread {
+            try {
+                val payload = JSONObject().apply {
+                    put("product_id", productId)
+                }
+
+                val result = ApiClient.post(
+                    session.getBaseUrl() + "/api/delete_product_photo.php",
+                    payload,
+                    session.getToken()
+                )
+
+                runOnUiThread {
+                    progress.visibility = View.GONE
+                    val body = result.body
+
+                    if (result.success && body?.optString("status") == "success") {
+                        Toast.makeText(
+                            this,
+                            body.optString("message", "Foto excluída com sucesso"),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        loadStock(etSearchStock.text.toString().trim())
+                    } else {
+                        Toast.makeText(
+                            this,
+                            body?.optString("message", result.message) ?: result.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    progress.visibility = View.GONE
+                    Toast.makeText(
+                        this,
+                        "Erro ao excluir foto: ${e.message ?: "falha desconhecida"}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun confirmDeletePhoto(productId: Int, productName: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir foto")
+            .setMessage("Deseja excluir a foto de \"$productName\"?")
+            .setPositiveButton("Excluir") { _, _ ->
+                deleteProductPhoto(productId)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun bitmapToDataUrl(bitmap: Bitmap): String {
@@ -226,6 +285,7 @@ class StockProductsActivity : AppCompatActivity() {
             val tvCategory = view.findViewById<TextView>(R.id.tvCardCategory)
             val tvRef = view.findViewById<TextView>(R.id.tvCardRef)
             val btnCardPhoto = view.findViewById<Button>(R.id.btnCardPhoto)
+            val btnCardDeletePhoto = view.findViewById<Button>(R.id.btnCardDeletePhoto)
 
             val item = items[position]
 
@@ -277,8 +337,15 @@ class StockProductsActivity : AppCompatActivity() {
                 }
             }
 
+            btnCardPhoto.text = if (imagePath.isBlank()) "Foto" else "Trocar"
+            btnCardDeletePhoto.visibility = if (imagePath.isBlank()) View.GONE else View.VISIBLE
+
             btnCardPhoto.setOnClickListener {
                 openCameraForProduct(productId)
+            }
+
+            btnCardDeletePhoto.setOnClickListener {
+                confirmDeletePhoto(productId, label)
             }
 
             return view

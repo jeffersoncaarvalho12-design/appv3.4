@@ -42,6 +42,15 @@
             android:backgroundTint="@color/green_dark" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btnAddNewModel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:text="Cadastrar novo modelo"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#2E7D32" />
+
     <ProgressBar
         android:id="@+id/progressStock"
         android:layout_width="wrap_content"

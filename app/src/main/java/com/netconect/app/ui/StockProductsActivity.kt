@@ -1,7 +1,9 @@
 package com.netconect.app.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -19,6 +21,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.netconect.app.R
 import com.netconect.app.util.ApiClient
 import com.netconect.app.util.SessionManager
@@ -45,6 +48,7 @@ class StockProductsActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_TAKE_PHOTO = 3001
+        private const val REQUEST_CAMERA_PERMISSION = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,11 +150,28 @@ class StockProductsActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
+        val permissionGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permissionGranted) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CAMERA),
+                REQUEST_CAMERA_PERMISSION
+            )
+            return
+        }
+
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, REQUEST_TAKE_PHOTO)
         } else {
-            Toast.makeText(this, "Câmera não disponível no aparelho", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Câmera não disponível no aparelho",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -281,6 +302,26 @@ class StockProductsActivity : AppCompatActivity() {
             }
 
             return view
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Permissão da câmera negada",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
